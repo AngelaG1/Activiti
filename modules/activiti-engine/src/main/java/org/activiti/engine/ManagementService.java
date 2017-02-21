@@ -191,6 +191,64 @@ public interface ManagementService {
    * @throws ActivitiObjectNotFoundException
    *           when no job exists with the given id.
    */
+
+   /**
+   * Reschedule a timer job with a time date.
+   * 
+   * @param jobId
+   *          id of the timer job to reschedule, cannot be null.
+   * @param timeDate
+   *          A fixed date in ISO 8601 format, when job will be fired
+   */
+  Job rescheduleTimeDateJob(String jobId, String timeDate);
+  
+  /**
+   * Reschedule a timer job with a time duration.
+   * 
+   * @param jobId
+   *          id of the timer job to reschedule, cannot be null.
+   * @param timeDuration
+   *          How long the timer should run before it is fired in ISO 8601 format. For example, PT10D means the timer will run for 10 days before it fires.
+   */
+  Job rescheduleTimeDurationJob(String jobId, String timeDuration);
+  
+  /**
+   * Reschedule a timer job with a time cycle.
+   * 
+   * @param jobId
+   *          id of the timer job to reschedule, cannot be null.
+   * @param timeCycle
+   *          Specifies a repeating interval at which the timer will fire in ISO 8601 format. For example R3/PT10H means the timer will fire three timers in intervals of 10 hours.
+   */
+  Job rescheduleTimeCycleJob(String jobId, String timeCycle);
+  
+  /**
+   * Reschedule a timer job.
+   * 
+   * @param jobId
+   *          id of the timer job to reschedule, cannot be null.
+   * @param timeDate
+   *          A fixed date in ISO 8601 format, when job will be fired
+   * @param timeDuration
+   *          How long the timer should run before it is fired in ISO 8601 format. For example, PT10D means the timer will run for 10 days before it fires.
+   * @param timeCycle
+   *          Specifies a repeating interval at which the timer will fire in ISO 8601 format. For example R3/PT10H means the timer will fire three timers in intervals of 10 hours.
+   * @param endDate
+   *          The date at which the application will stop creating additional jobs. The value should be provided in ISO8601 format. For example "2015-02-25T16:42:11+00:00". 
+   * @param calendarName
+   *          The name of a business calendar defined in the process engine configuration. If null the default business calendars is used.
+   */
+  Job rescheduleTimerJob(String jobId, String timeDate, String timeDuration, String timeCycle, String endDate, String calendarName);
+
+  /**
+   * Returns the full stacktrace of the exception that occurs when the job with the given id was last executed. 
+   * Returns null when the job has no exception stacktrace.
+   * 
+   * @param jobId
+   *          id of the job, cannot be null.
+   * @throws FlowableObjectNotFoundException
+   *           when no job exists with the given id.
+   */
   String getJobExceptionStacktrace(String jobId);
   
   /**
