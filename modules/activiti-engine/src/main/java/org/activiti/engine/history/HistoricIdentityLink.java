@@ -13,6 +13,8 @@
 
 package org.activiti.engine.history;
 
+import java.util.Date;
+
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.UserQuery;
 import org.activiti.engine.task.IdentityLink;
@@ -23,7 +25,7 @@ import org.activiti.engine.task.IdentityLinkType;
  * 
  * @author Frederik Heremans
  */
-public interface HistoricIdentityLink {
+public interface HistoricIdentityLink extends HistoricData {
 
   /**
    * Returns the type of link. See {@link IdentityLinkType} for the native supported types by Activiti.
@@ -44,6 +46,10 @@ public interface HistoricIdentityLink {
    * The id of the task associated with this identity link.
    */
   String getTaskId();
+  /**
+   * Returns the time when the identity link was created.
+   */
+  Date getCreateTime();
 
   /**
    * The id of the process instance associated with this identity link.

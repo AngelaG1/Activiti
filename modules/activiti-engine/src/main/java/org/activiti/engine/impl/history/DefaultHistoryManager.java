@@ -40,6 +40,7 @@ import org.activiti.engine.impl.persistence.entity.IdentityLinkEntity;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.persistence.entity.VariableInstanceEntity;
 import org.activiti.engine.task.Event;
+import org.activiti.engine.task.IdentityLinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -456,12 +457,20 @@ public class DefaultHistoryManager extends AbstractManager implements HistoryMan
    */
   @Override
   public void recordTaskAssigneeChange(String taskId, String assignee) {
-    if (isHistoryLevelAtLeast(HistoryLevel.AUDIT)) {
-      HistoricTaskInstanceEntity historicTaskInstance = getHistoricTaskInstanceEntityManager().findById(taskId);
-      if (historicTaskInstance != null) {
-        historicTaskInstance.setAssignee(assignee);
-      }
-    }
+	  if (isHistoryLevelAtLeast(HistoryLevel.AUDIT)) {
+		  HistoricTaskInstanceEntity historicTaskInstance = getHistoricTaskInstanceEntityManager().findById(taskId);
+		  if (historicTaskInstance != null) {
+			  historicTaskInstance.setAssignee(assignee);
+
+			  HistoricIdentityLinkEntity historicIdentityLinkEntity = getHistoricIdentityLinkEntityManager().create();
+			  historicIdentityLinkEntity.setTaskId(historicTaskInstance.getId());
+			  historicIdentityLinkEntity.setType(IdentityLinkType.ASSIGNEE);
+			  historicIdentityLinkEntity.setUserId(historicTaskInstance.getAssignee());
+			  Date time = getClock().getCurrentTime();
+			  historicIdentityLinkEntity.setCreateTime(time);
+			  getHistoricIdentityLinkEntityManager().insert(historicIdentityLinkEntity, false);
+		  }
+	  }
   }
 
   /*
@@ -471,12 +480,19 @@ public class DefaultHistoryManager extends AbstractManager implements HistoryMan
    */
   @Override
   public void recordTaskOwnerChange(String taskId, String owner) {
-    if (isHistoryLevelAtLeast(HistoryLevel.AUDIT)) {
-      HistoricTaskInstanceEntity historicTaskInstance = getHistoricTaskInstanceEntityManager().findById(taskId);
-      if (historicTaskInstance != null) {
-        historicTaskInstance.setOwner(owner);
-      }
-    }
+	  if (isHistoryLevelAtLeast(HistoryLevel.AUDIT)) {
+		  HistoricTaskInstanceEntity historicTaskInstance = getHistoricTaskInstanceEntityManager().findById(taskId);
+		  if (historicTaskInstance != null) {
+			  historicTaskInstance.setOwner(owner);
+			  HistoricIdentityLinkEntity historicIdentityLinkEntity = getHistoricIdentityLinkEntityManager().create();
+			  historicIdentityLinkEntity.setTaskId(historicTaskInstance.getId());
+			  historicIdentityLinkEntity.setType(IdentityLinkType.OWNER);
+			  historicIdentityLinkEntity.setUserId(historicTaskInstance.getOwner());
+			  Date time = getClock().getCurrentTime();
+			  historicIdentityLinkEntity.setCreateTime(time);
+			  getHistoricIdentityLinkEntityManager().insert(historicIdentityLinkEntity, false);
+		  }
+	  }
   }
 
   /*

@@ -13,6 +13,7 @@
 package org.activiti.engine.impl.persistence.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class HistoricIdentityLinkEntityImpl extends AbstractEntityNoRevision imp
   protected String groupId;
   protected String taskId;
   protected String processInstanceId;
+  protected Date createTime = new Date();
 
   public HistoricIdentityLinkEntityImpl() {
 
@@ -56,6 +58,10 @@ public class HistoricIdentityLinkEntityImpl extends AbstractEntityNoRevision imp
     if (this.processInstanceId != null) {
       persistentState.put("processInstanceId", this.processInstanceId);
     }
+    
+    if (this.createTime != null) {
+      persistentState.put("createTime", this.createTime);
+    }    
 
     return persistentState;
   }
@@ -112,5 +118,20 @@ public class HistoricIdentityLinkEntityImpl extends AbstractEntityNoRevision imp
 
   public void setProcessInstanceId(String processInstanceId) {
     this.processInstanceId = processInstanceId;
+  }
+  
+  @Override
+  public Date getCreateTime() {
+    return createTime;
+  }
+
+  @Override
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
+
+  @Override
+  public Date getTime() {
+	  return getCreateTime();
   }
 }

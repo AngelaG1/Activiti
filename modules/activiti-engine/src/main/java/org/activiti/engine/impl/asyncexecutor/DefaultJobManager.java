@@ -21,11 +21,13 @@ import org.activiti.engine.delegate.event.impl.ActivitiEventBuilder;
 import org.activiti.engine.impl.calendar.BusinessCalendar;
 import org.activiti.engine.impl.calendar.CycleBusinessCalendar;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.cfg.TransactionState;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.el.NoExecutionVariableScope;
 import org.activiti.engine.impl.interceptor.CommandContext;
 import org.activiti.engine.impl.jobexecutor.AsyncContinuationJobHandler;
 import org.activiti.engine.impl.jobexecutor.AsyncJobAddedNotification;
+import org.activiti.engine.impl.jobexecutor.JobAddedTransactionListener;
 import org.activiti.engine.impl.jobexecutor.JobHandler;
 import org.activiti.engine.impl.jobexecutor.TimerEventHandler;
 import org.activiti.engine.impl.jobexecutor.TimerStartEventJobHandler;
@@ -403,10 +405,17 @@ public class DefaultJobManager implements JobManager {
   }
   
   protected void hintAsyncExecutor(JobEntity job) {
-    AsyncJobAddedNotification jobAddedNotification = new AsyncJobAddedNotification(job, getAsyncExecutor());
-    getCommandContext().addCloseListener(jobAddedNotification);
+	   AsyncJobAddedNotification jobAddedNotification = new AsyncJobAddedNotification(job, getAsyncExecutor());
+	   getCommandContext().addCloseListener(jobAddedNotification);
+	  if (Context.getTransactionContext() != null) {
+		  JobAddedTransactionListener jobAddedTransactionListener = new JobAddedTransactionListener(job, getAsyncExecutor());
+		  Context.getTransactionContext().addTransactionListener(TransactionState.COMMITTED, jobAddedTransactionListener);
+	  } else {
+		  //AsyncJobAddedNotification jobAddedNotification = new AsyncJobAddedNotification(job, getAsyncExecutor());
+		  getCommandContext().addCloseListener(jobAddedNotification);
+	  }
   }
-  
+
   protected JobEntity internalCreateAsyncJob(ExecutionEntity execution, boolean exclusive) {
     JobEntity asyncJob = processEngineConfiguration.getJobEntityManager().create();
     fillDefaultAsyncJobInfo(asyncJob, execution, exclusive);

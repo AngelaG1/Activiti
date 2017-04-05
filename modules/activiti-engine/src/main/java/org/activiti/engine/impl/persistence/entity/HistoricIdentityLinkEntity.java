@@ -12,6 +12,8 @@
  */
 package org.activiti.engine.impl.persistence.entity;
 
+import java.util.Date;
+
 import org.activiti.engine.history.HistoricIdentityLink;
 
 /**
@@ -32,5 +34,7 @@ public interface HistoricIdentityLinkEntity extends HistoricIdentityLink, Entity
   void setTaskId(String taskId);
 
   void setProcessInstanceId(String processInstanceId);
+
+  void setCreateTime(Date createTime);
     
 }

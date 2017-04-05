@@ -12,6 +12,8 @@
  */
 package org.activiti.engine.impl.persistence.entity;
 
+import java.util.Date;
+
 import org.activiti.engine.impl.variable.VariableType;
 
 /**
@@ -34,4 +36,6 @@ public interface VariableInstanceEntity extends VariableInstance {
   VariableType getType();
 
   void setType(VariableType type);
+
+  Date getCreateTime();
 }

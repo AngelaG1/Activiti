@@ -13,6 +13,7 @@
 package org.activiti.engine.impl.persistence.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class VariableInstanceEntityImpl extends AbstractEntity implements Variab
   protected String processInstanceId;
   protected String executionId;
   protected String taskId;
+  protected Date createTime;
 
   protected Long longValue;
   protected Double doubleValue;
@@ -88,6 +90,10 @@ public class VariableInstanceEntityImpl extends AbstractEntity implements Variab
   public void setProcessInstanceId(String processInstanceId) {
     this.processInstanceId = processInstanceId;
   }
+  public void setCreateTime(Date time) {
+	// TODO Auto-generated method stub
+    this.createTime=time;
+}
 
   public void setExecutionId(String executionId) {
     this.executionId = executionId;
@@ -166,6 +172,10 @@ public class VariableInstanceEntityImpl extends AbstractEntity implements Variab
   public String getProcessInstanceId() {
     return processInstanceId;
   }
+  public Date getCreateTime() {
+	// TODO Auto-generated method stub
+	return createTime;
+}
 
   public String getTaskId() {
     return taskId;
