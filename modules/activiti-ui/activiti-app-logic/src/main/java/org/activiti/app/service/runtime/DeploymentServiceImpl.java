@@ -64,7 +64,7 @@ public class DeploymentServiceImpl implements DeploymentService {
   @Autowired
   protected AppDefinitionService appDefinitionService;
 
-  @Autowired
+  @Autowired(required=false)
   protected ModelService modelService;
 
   @Autowired

@@ -23,7 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.activiti.app.domain.common.IdBlockSize;
+import org.activiti.engine.identity.IdBlockSize;
 
 @Entity
 @Table(name = "ACT_DE_MODEL_RELATION")

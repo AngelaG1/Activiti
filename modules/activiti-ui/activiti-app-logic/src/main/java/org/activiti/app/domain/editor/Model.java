@@ -12,27 +12,33 @@
  */
 package org.activiti.app.domain.editor;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="ACT_DE_MODEL")
 public class Model extends AbstractModel {
 
-	@Column(name="thumbnail")
-	private byte[] thumbnail;
-	
-	public Model() {
-		super();
-	}
-	
-	public byte[] getThumbnail() {
-		return thumbnail;
-	}
-
-	public void setThumbnail(byte[] thumbnail) {
-		this.thumbnail = thumbnail;
-	}
+	  @Column(name="thumbnail")
+	  private byte[] thumbnail;
+		
+		public Model() {
+			super();
+		}
+	  @OneToMany(targetEntity=ModelShareInfo.class, mappedBy="model", fetch=FetchType.LAZY)
+	  private List<ModelShareInfo> shares;
+	  
+	  public byte[] getThumbnail() {
+	    return this.thumbnail;
+	  }
+	  
+	  public void setThumbnail(byte[] thumbnail) {
+	    this.thumbnail = thumbnail;
+	  }
 	
 }

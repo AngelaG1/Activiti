@@ -28,16 +28,26 @@ import org.activiti.app.domain.editor.Model;
 import org.activiti.app.domain.editor.ModelHistory;
 import org.activiti.app.domain.editor.ModelRelation;
 import org.activiti.app.domain.editor.ModelRelationTypes;
+import org.activiti.app.domain.editor.ModelShareInfo;
+import org.activiti.app.model.common.ResultListDataRepresentation;
 import org.activiti.app.model.editor.ModelKeyRepresentation;
 import org.activiti.app.model.editor.ModelRepresentation;
+import org.activiti.app.model.editor.ModelShareInfoRepresentation;
 import org.activiti.app.model.editor.ReviveModelResultRepresentation;
 import org.activiti.app.model.editor.ReviveModelResultRepresentation.UnresolveModelRepresentation;
+import org.activiti.app.model.editor.ShareInfoPermissionRepresentation;
+import org.activiti.app.model.editor.ShareInfoUpdateRepresentation;
 import org.activiti.app.repository.editor.ModelHistoryRepository;
 import org.activiti.app.repository.editor.ModelRelationRepository;
 import org.activiti.app.repository.editor.ModelRepository;
+import org.activiti.app.repository.editor.ModelShareInfoRepository;
+import org.activiti.app.security.SecurityUtils;
+import org.activiti.app.service.SystemPropertiesService;
 import org.activiti.app.service.api.DeploymentService;
 import org.activiti.app.service.api.ModelService;
 import org.activiti.app.service.api.UserCache;
+
+import org.activiti.app.service.api.GroupService;
 import org.activiti.app.service.exception.InternalServerErrorException;
 import org.activiti.app.service.exception.NotFoundException;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -53,6 +63,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +72,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
-public class ModelServiceImpl implements ModelService {
+public abstract class ModelServiceImpl implements ModelService {
 
   private final Logger log = LoggerFactory.getLogger(ModelServiceImpl.class);
 
@@ -77,6 +88,12 @@ public class ModelServiceImpl implements ModelService {
 
   @Autowired
   protected ModelRepository modelRepository;
+  
+  @Autowired
+  protected ModelShareService modelShareService;
+  
+  @Autowired
+  protected SystemPropertiesService systemPropertiesService;
 
   @Autowired
   protected ModelHistoryRepository modelHistoryRepository;
@@ -93,10 +110,17 @@ public class ModelServiceImpl implements ModelService {
   protected BpmnJsonConverter bpmnJsonConverter = new BpmnJsonConverter();
 
   protected BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
-  
-  @Override
+
+  @Autowired
+  protected ModelShareInfoRepository shareInfoRepository;
+
+  @Autowired
+  protected GroupService groupService;
+
+
+
   public Model getModel(Long modelId) {
-    Model model = modelRepository.findOne(modelId);
+	  Model model = modelRepository.findOne(modelId);
 
     if (model == null) {
       NotFoundException modelNotFound = new NotFoundException("No model found with the given id: " + modelId);
@@ -281,7 +305,6 @@ public class ModelServiceImpl implements ModelService {
     return persistModel(modelObject);
   }
 
-  @Override
   @Transactional
   public void deleteModel(long modelId, boolean cascadeHistory, boolean deleteRuntimeApp) {
 
@@ -372,8 +395,8 @@ public class ModelServiceImpl implements ModelService {
         try {
           AppDefinition appDefinition = objectMapper.readValue(latestModel.getModelEditorJson(), AppDefinition.class);
           for (AppModelDefinition appModelDefinition : appDefinition.getModels()) {
-            if (!modelRepository.exists(appModelDefinition.getId())) {
-              result.getUnresolvedModels().add(new UnresolveModelRepresentation(appModelDefinition.getId(), 
+            if (!modelRepository.exists(Long.valueOf(appModelDefinition.getId()))) {
+              result.getUnresolvedModels().add(new UnresolveModelRepresentation(Long.valueOf(appModelDefinition.getId()), 
                   appModelDefinition.getName(), appModelDefinition.getLastUpdatedBy()));
             }
           }
@@ -590,4 +613,71 @@ public class ModelServiceImpl implements ModelService {
     model.setVersion(basedOn.getVersion());
     model.setComment(basedOn.getComment());
   }
+  public ResultListDataRepresentation getModelShareInfo(Long modelId)
+  {
+    Model model = getModel(Long.valueOf(modelId));
+    
+    List<ModelShareInfo> shareInfoList = this.shareInfoRepository.findByModelIdOrderByShareDateAsc(model.getId(), new PageRequest(0, 200));
+    ResultListDataRepresentation result = new ResultListDataRepresentation();
+    result.setSize(Integer.valueOf(shareInfoList.size()));
+    result.setTotal(Long.valueOf(shareInfoList.size()));
+    result.setStart(Integer.valueOf(0));
+    if (shareInfoList.size() > 0)
+    {
+      List<ModelShareInfoRepresentation> representations = new ArrayList<ModelShareInfoRepresentation>();
+      for (ModelShareInfo shareInfo : shareInfoList) {
+        representations.add(new ModelShareInfoRepresentation(shareInfo, false));
+      }
+      result.setData(representations);
+    }
+    return result;
+  }
+  
+  public void updateShareInfoForModel(Long modelId, ShareInfoUpdateRepresentation update)
+  {
+    Model model = getModel(modelId);
+    if (CollectionUtils.isNotEmpty(update.getRemoved())) {
+      for (Long id : update.getRemoved()) {
+        this.modelShareService.deleteShareInfo(model, id.toString());
+      }
+    }
+    ModelShareInfo shareInfo;
+    if (CollectionUtils.isNotEmpty(update.getUpdated()))
+    {
+      shareInfo = null;
+      for (ShareInfoPermissionRepresentation permission : update.getUpdated()) {
+        if (permission.getId() != null)
+        {
+          shareInfo = this.shareInfoRepository.findByModelIdAndId(modelId, permission.getId());
+          if (shareInfo != null)
+          {
+            shareInfo.setPermission(permission.getSharePermission());
+            this.shareInfoRepository.save(shareInfo);
+          }
+        }
+      }
+    }
+   
+    User currentUser;
+    if (CollectionUtils.isNotEmpty(update.getAdded()))
+    {
+         
+      currentUser = SecurityUtils.getCurrentUserObject();
+      for (ShareInfoPermissionRepresentation permission : update.getAdded()) {
+        if ((permission.getUserId() != null) || (permission.getEmail() != null))
+        {
+          String userToShareWith = null;
+          if (permission.getUserId() != null)
+          {
+        	  userToShareWith = permission.getUserId();
+        
+        }
+
+          this.modelShareService.shareModelWithUser(model, userToShareWith, permission.getSharePermission(), currentUser.getId());
+        }
+   
+      }
+    }
+  }
+
 }

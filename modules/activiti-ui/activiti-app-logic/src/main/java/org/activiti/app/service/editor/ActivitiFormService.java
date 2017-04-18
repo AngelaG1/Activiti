@@ -43,7 +43,7 @@ public class ActivitiFormService {
 
   private static final Logger logger = LoggerFactory.getLogger(ActivitiFormService.class);
 
-  @Autowired
+  @Autowired(required=false)
   protected ModelService modelService;
 
   @Autowired

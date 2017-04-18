@@ -64,6 +64,9 @@
 			<column name="model_type" type="int">
                 <constraints nullable="true" />
             </column>
+            <column name="reference_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
 		</createTable>
         
         <createIndex indexName="idx_proc_mod_created"
@@ -115,13 +118,16 @@
             <column name="model_type" type="int">
                 <constraints nullable="true" />
             </column>
+            <column name="reference_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
         </createTable>
         
         <createIndex indexName="idx_proc_mod_history_proc"
             tableName="ACT_DE_MODEL_HISTORY" unique="false">
             <column name="model_id" />
         </createIndex>
-        
+                
         <createTable tableName="ACT_WO_COMMENTS">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false" />
@@ -227,6 +233,66 @@
 		<addForeignKeyConstraint baseColumnNames="model_id"
 			baseTableName="ACT_DE_MODEL_RELATION" constraintName="fk_relation_child"
 			referencedColumnNames="id" referencedTableName="ACT_DE_MODEL" />
+            
+            		<!-- MODEL SHARE INFO -->
+		
+        <createTable tableName="ACT_DE_MODEL_SHARE_INFO">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+			<column name="group_id" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="shared_by" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="model_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="share_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="permission" type="smallint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+
+	<addForeignKeyConstraint baseColumnNames="user_id"
+		baseTableName="ACT_DE_MODEL_SHARE_INFO" constraintName="fk_proc_mod_share_user"
+		referencedColumnNames="ID_" referencedTableName="ACT_ID_USER" />
+
+	<addForeignKeyConstraint baseColumnNames="shared_by"
+		baseTableName="ACT_DE_MODEL_SHARE_INFO" constraintName="fk_proc_mod_share_by_user"
+		referencedColumnNames="user_id" referencedTableName="ACT_IDM_PERSISTENT_TOKEN"/>
+
+	<addForeignKeyConstraint baseColumnNames="model_id"
+		baseTableName="ACT_DE_MODEL_SHARE_INFO" constraintName="fk_mod_share_mod"
+		referencedColumnNames="id" referencedTableName="ACT_DE_MODEL" />
+
+	<createIndex indexName="idx_mod_share_group" tableName="ACT_DE_MODEL_SHARE_INFO"
+		unique="false">
+		<column name="group_id" />
+	</createIndex>
+	<createIndex indexName="idx_proc_mod_share_user" tableName="ACT_DE_MODEL_SHARE_INFO"
+		unique="false">
+		<column name="user_id" />
+	</createIndex>
+	<createIndex indexName="idx_proc_mod_share_by_user"
+		tableName="ACT_DE_MODEL_SHARE_INFO" unique="false">
+		<column name="shared_by" />
+	</createIndex>
+
+	<createIndex indexName="idx_proc_mod_share_process"
+		tableName="ACT_DE_MODEL_SHARE_INFO" unique="false">
+		<column name="model_id" />
+	</createIndex>
 			
 	</changeSet>
 

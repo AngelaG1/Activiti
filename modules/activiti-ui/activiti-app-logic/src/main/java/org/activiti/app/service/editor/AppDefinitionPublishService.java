@@ -34,7 +34,7 @@ public class AppDefinitionPublishService {
 
   private static final Logger logger = LoggerFactory.getLogger(AppDefinitionPublishService.class);
 
-  @Autowired
+  @Autowired(required=false)
   protected ModelService modelService;
 
   @Autowired

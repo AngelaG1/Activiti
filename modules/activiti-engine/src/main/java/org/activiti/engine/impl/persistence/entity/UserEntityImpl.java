@@ -13,11 +13,21 @@
 package org.activiti.engine.impl.persistence.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+
+
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.Picture;
 import org.activiti.engine.impl.db.HasRevision;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 
 /**
  * @author Tom Baeyens
@@ -26,98 +36,131 @@ import org.activiti.engine.impl.db.HasRevision;
  */
 public class UserEntityImpl extends AbstractEntity implements UserEntity, Serializable, HasRevision {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  protected String firstName;
-  protected String lastName;
-  protected String email;
-  protected String password;
+	protected String firstName;
+	protected String lastName;
+	protected String email;
+	protected String password;
 
-  protected ByteArrayRef pictureByteArrayRef;
+	protected ByteArrayRef pictureByteArrayRef;
 
-  public UserEntityImpl() {
-  }
+	private List<Group> groups;
 
-  public Object getPersistentState() {
-    Map<String, Object> persistentState = new HashMap<String, Object>();
-    persistentState.put("firstName", firstName);
-    persistentState.put("lastName", lastName);
-    persistentState.put("email", email);
-    persistentState.put("password", password);
-    
-    if (pictureByteArrayRef != null) {
-      persistentState.put("pictureByteArrayId", pictureByteArrayRef.getId());
-    }
-    
-    return persistentState;
-  }
 
-  public Picture getPicture() {
-    if (pictureByteArrayRef != null && pictureByteArrayRef.getId() != null) {
-      return new Picture(pictureByteArrayRef.getBytes(), pictureByteArrayRef.getName());
-    }
-    return null;
-  }
 
-  public void setPicture(Picture picture) {
-    if(picture != null) {
-      savePicture(picture);
-    } else {
-      deletePicture();
-    }      
-  }
+	private Long tenantId;
 
-  protected void savePicture(Picture picture) {
-    if (pictureByteArrayRef != null) {
-      pictureByteArrayRef = new ByteArrayRef();
-    }
-    pictureByteArrayRef.setValue(picture.getMimeType(), picture.getBytes());
-  }
-  
-  protected void deletePicture() {
-    if (pictureByteArrayRef != null) {
-      pictureByteArrayRef.delete();
-    }
-  }
-  
-  public String getFirstName() {
-    return firstName;
-  }
+	public UserEntityImpl() {
+	}
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+	public Object getPersistentState() {
+		Map<String, Object> persistentState = new HashMap<String, Object>();
+		persistentState.put("firstName", firstName);
+		persistentState.put("lastName", lastName);
+		persistentState.put("email", email);
+		persistentState.put("password", password);
+		persistentState.put("tenantId", tenantId);
+		
+		persistentState.put("pictureByteArrayRef", pictureByteArrayRef);
 
-  public String getLastName() {
-    return lastName;
-  }
+		persistentState.put("groups", groups);
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+		if (pictureByteArrayRef != null) {
+			persistentState.put("pictureByteArrayId", pictureByteArrayRef.getId());
+		}
 
-  public String getEmail() {
-    return email;
-  }
+		return persistentState;
+	}
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+	public Picture getPicture() {
+		if (pictureByteArrayRef != null && pictureByteArrayRef.getId() != null) {
+			return new Picture(pictureByteArrayRef.getBytes(), pictureByteArrayRef.getName());
+		}
+		return null;
+	}
 
-  public String getPassword() {
-    return password;
-  }
+	public void setPicture(Picture picture) {
+		if(picture != null) {
+			savePicture(picture);
+		} else {
+			deletePicture();
+		}      
+	}
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+	protected void savePicture(Picture picture) {
+		if (pictureByteArrayRef != null) {
+			pictureByteArrayRef = new ByteArrayRef();
+		}
+		pictureByteArrayRef.setValue(picture.getMimeType(), picture.getBytes());
+	}
 
-  public boolean isPictureSet() {
-    return pictureByteArrayRef != null && pictureByteArrayRef.getId() != null;
-  }
+	protected void deletePicture() {
+		if (pictureByteArrayRef != null) {
+			pictureByteArrayRef.delete();
+		}
+	}
 
-  public ByteArrayRef getPictureByteArrayRef() {
-    return pictureByteArrayRef;
-  }
-  
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public boolean isPictureSet() {
+		return pictureByteArrayRef != null && pictureByteArrayRef.getId() != null;
+	}
+
+	public ByteArrayRef getPictureByteArrayRef() {
+		return pictureByteArrayRef;
+	}
+
+	
+	public List<Group> getGroups()
+	{
+		return this.groups;
+	}
+
+	public void setGroups(List<Group> groups)
+	{
+		this.groups = groups;
+	}
+
+
+	public Long getTenantId() {
+
+		return this.tenantId;
+	}
+
+	public void setTenantId(Long tenantId) {
+		this.tenantId = tenantId;
+	}
+
+
 }

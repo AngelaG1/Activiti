@@ -13,6 +13,8 @@
 package org.activiti.engine.identity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 
 import org.activiti.engine.IdentityService;
 
@@ -23,15 +25,42 @@ import org.activiti.engine.IdentityService;
  */
 public interface Group extends Serializable {
 
-  String getId();
+	String getId();
 
-  void setId(String id);
+	void setId(String id);
 
-  String getName();
+	String getName();
 
-  void setName(String name);
+	void setName(String name);
+	
+	Set<User> getUsers();
+	
+	void setUsers(Set<User> users);
+	
+	Long getTenantId();
+	
+	void setTenantId(Long tenantId);
+	
+	String getType();
+	
+	void setType(String typeAssignment);
 
-  String getType();
+	Group getParent();
+	
+	void setParent(Group parent);
+	
+	String getParentGroupId();
+	
+	void setParentGroupId(String parentGroupId);
+	
+	String getManagerGroupId();
+	
+	void setManagerGroupId(String managerGroupId);
+	
+	Group getManagerGroup();
+	
+	void setManagerGroup(Group managerGroup);
 
-  void setType(String string);
+
 }
+

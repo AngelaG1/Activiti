@@ -264,8 +264,24 @@ angular.module('activitiModeler')
 	.controller('ShareModelPopupCrtl', ['$rootScope', '$scope', '$http', '$timeout', '$translate', 'UserService',
         function ($rootScope, $scope, $http, $timeout, $translate, UserService) {
 
-            var model = $scope.model.app;
-            var popupType = 'APP';
+            var model;
+            var popupType;
+            if ($scope.model.process) {
+                model = $scope.model.process;
+                popupType = 'PROCESS';
+            }
+            else if ($scope.model.form) {
+                model = $scope.model.form;
+                popupType = 'FORM';
+            } else if ($scope.model.decisionTable) {
+                model = $scope.model.decisionTable;
+                popupType = 'DECISION-TABLE';
+            } else {
+                model = $scope.model.app;
+                popupType = 'APP';
+            }
+            //var model = $scope.model.app;
+           // var popupType = 'APP';
 
             $scope.popup = {
                 loading: false,
@@ -387,22 +403,22 @@ angular.module('activitiModeler')
 
                     // Skip duplicate person
                     for (var i = 0; i < $scope.popup.shareInfo.data.length; i++) {
-                        if ($scope.popup.shareInfo.data[i].person && $scope.popup.shareInfo.data[i].person.id == user.id) {
+                        if ($scope.popup.shareInfo.data[i].person && $scope.popup.shareInfo.data[i].person.id == userId) {
                             return;
                         }
                     }
 
                     $scope.popup.shareInfo.data.splice(0, 0, added);
-                    $scope.popup.added[user.id] = added;
+                    $scope.popup.added[userId] = added;
 
                 } else {
                     $scope.popup.shareInfo.data = [added];
-                    $scope.popup.added[user.id] = added;
+                    $scope.popup.added[userId] = added;
 
                 }
 
                 // Add to list that is filtered when fetching users
-                $scope.currentlySharedUserIds.push(user.id);
+                $scope.currentlySharedUserIds.push(userId);
 
                 $scope.popup.newPerson = undefined;
             };

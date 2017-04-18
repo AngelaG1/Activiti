@@ -43,11 +43,12 @@ public class EditorGroupsResource {
       groupNameFilter = "%" + groupNameFilter + "%";
     }
     List<Group> matchingGroups = identityService.createGroupQuery()
-        .groupNameLike(groupNameFilter)
-        .groupType(GroupTypes.TYPE_ASSIGNMENT)
-        .list();
+    		.groupNameLike(groupNameFilter)
+    		.groupType(GroupTypes.TYPE_ASSIGNMENT)
+    		.list();
 
-    ResultListDataRepresentation result = new ResultListDataRepresentation(matchingGroups);
+    ResultListDataRepresentation result = new ResultListDataRepresentation();
+    result=(ResultListDataRepresentation) matchingGroups;
     // TODO: get total result count instead of page-count, in case the matching
     // list's size is equal to the page size
     return result;

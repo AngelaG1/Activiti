@@ -23,7 +23,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.activiti.app.domain.common.IdBlockSize;
+import org.activiti.engine.identity.IdBlockSize;
 
 @MappedSuperclass
 public class AbstractModel {
@@ -73,6 +73,9 @@ public class AbstractModel {
 
   @Column(name = "model_type")
   protected Integer modelType;
+  
+  @Column(name="reference_id")
+  protected Long referenceId;
 
   public AbstractModel() {
     this.created = new Date();

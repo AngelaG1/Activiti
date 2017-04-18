@@ -65,7 +65,7 @@ public class ActivitiDecisionTableService extends BaseActivitiModelService {
 
   protected static final int MIN_FILTER_LENGTH = 1;
 
-  @Autowired
+  @Autowired(required=false)
   protected ModelService modelService;
 
   @Autowired

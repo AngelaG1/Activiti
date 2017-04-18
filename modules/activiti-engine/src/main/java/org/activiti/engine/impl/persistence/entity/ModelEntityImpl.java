@@ -47,13 +47,13 @@ public class ModelEntityImpl extends AbstractEntity implements ModelEntity, Seri
   public Object getPersistentState() {
     Map<String, Object> persistentState = new HashMap<String, Object>();
     persistentState.put("name", this.name);
-    persistentState.put("key", key);
+    persistentState.put("key", this.key);
     persistentState.put("category", this.category);
     persistentState.put("createTime", this.createTime);
-    persistentState.put("lastUpdateTime", lastUpdateTime);
+    persistentState.put("lastUpdateTime", this.lastUpdateTime);
     persistentState.put("version", this.version);
     persistentState.put("metaInfo", this.metaInfo);
-    persistentState.put("deploymentId", deploymentId);
+    persistentState.put("deploymentId", this.deploymentId);
     persistentState.put("editorSourceValueId", this.editorSourceValueId);
     persistentState.put("editorSourceExtraValueId", this.editorSourceExtraValueId);
     return persistentState;

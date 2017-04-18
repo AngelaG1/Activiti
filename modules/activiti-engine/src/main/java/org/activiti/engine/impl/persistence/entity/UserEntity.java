@@ -12,8 +12,14 @@
  */
 package org.activiti.engine.impl.persistence.entity;
 
+import java.util.Date;
+import java.util.List;
+
+
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.Picture;
 import org.activiti.engine.identity.User;
+
 import org.activiti.engine.impl.db.HasRevision;
 
 /**
@@ -49,5 +55,18 @@ public interface UserEntity extends User, Entity, HasRevision {
   boolean isPictureSet();
 
   ByteArrayRef getPictureByteArrayRef();
+
+
+
   
+  List<Group> getGroups();
+  
+  void setGroups(List<Group> groups);
+
+  
+
+  Long getTenantId();
+
+  void setTenantId(Long tenantId);
+ 
 }

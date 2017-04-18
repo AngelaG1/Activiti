@@ -37,7 +37,7 @@ public class AppDefinitionExportService {
 
   private static final Logger logger = LoggerFactory.getLogger(AppDefinitionExportService.class);
 
-  @Autowired
+  @Autowired(required=false)
   protected ModelService modelService;
 
   @Autowired

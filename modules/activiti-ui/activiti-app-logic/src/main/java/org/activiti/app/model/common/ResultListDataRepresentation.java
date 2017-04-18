@@ -16,49 +16,63 @@ import java.util.List;
 
 
 
-/**
- * @author Tijs Rademakers
- */
-public class ResultListDataRepresentation {
-	
+
+public class ResultListDataRepresentation
+{
 	protected Integer size;
 	protected Long total;
 	protected Integer start;
 	protected List<? extends Object> data;
-	
+
 	public ResultListDataRepresentation() {}
-	
-	public ResultListDataRepresentation(List<? extends Object> data) {
+
+	public ResultListDataRepresentation(int size, int total, int start, List<? extends AbstractRepresentation> data)
+	{
+		this.size = Integer.valueOf(size);
+		this.total = Long.valueOf(total);
+		this.start = Integer.valueOf(start);
 		this.data = data;
-		if (data != null) {
-			size = data.size();
-			total = Long.valueOf(data.size());
-			start = 0;
+	}
+
+	public ResultListDataRepresentation(List<? extends AbstractRepresentation> data)
+	{
+		this.data = data;
+		if (data != null)
+		{
+			this.size = Integer.valueOf(data.size());
+			this.total = Long.valueOf(data.size());
+			this.start = Integer.valueOf(0);
 		}
 	}
-	
-	public Integer getSize() {
-		return size;
+
+	public Integer getSize()
+	{
+		return this.size;
 	}
+
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	public Long getTotal() {
-		return total;
+
+	public Long getTotal()
+	{
+		return this.total;
 	}
-	public void setTotal(Long total) {
+
+	public void setTotal(Long total)
+	{
 		this.total = total;
 	}
 	public Integer getStart() {
-		return start;
+		return this.start;
 	}
 	public void setStart(Integer start) {
 		this.start = start;
 	}
 	public List<? extends Object> getData() {
-		return data;
+		return this.data;
 	}
 	public void setData(List<? extends Object> data) {
 		this.data = data;
-	}	
+	}
 }

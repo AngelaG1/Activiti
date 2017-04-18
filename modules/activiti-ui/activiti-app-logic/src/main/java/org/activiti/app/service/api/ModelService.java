@@ -18,9 +18,11 @@ import java.util.Map;
 import org.activiti.app.domain.editor.AbstractModel;
 import org.activiti.app.domain.editor.Model;
 import org.activiti.app.domain.editor.ModelHistory;
+import org.activiti.app.model.common.ResultListDataRepresentation;
 import org.activiti.app.model.editor.ModelKeyRepresentation;
 import org.activiti.app.model.editor.ModelRepresentation;
 import org.activiti.app.model.editor.ReviveModelResultRepresentation;
+import org.activiti.app.model.editor.ShareInfoUpdateRepresentation;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.identity.User;
 
@@ -62,4 +64,10 @@ public interface ModelService {
   void deleteModel(long modelId, boolean cascadeHistory, boolean deleteRuntimeApp);
 
   ReviveModelResultRepresentation reviveProcessModelHistory(ModelHistory modelHistory, User user, String newVersionComment);
+
+  void updateShareInfoForModel(Long modelId, ShareInfoUpdateRepresentation update);
+
+  ResultListDataRepresentation getModelShareInfo(Long modelId);
+
+
 }

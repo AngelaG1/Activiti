@@ -46,7 +46,7 @@ public class AppDefinitionImportService {
   @Autowired
   protected AppDefinitionPublishService appDefinitionPublishService;
   
-  @Autowired
+  @Autowired(required=false)
   protected ModelService modelService;
   
   @Autowired
@@ -336,7 +336,7 @@ public class AppDefinitionImportService {
       for (Long oldFormId : formKeyAndModelMap.keySet()) {
         Model formModel = formKeyAndModelMap.get(oldFormId);
         oldFormIdFormKeyMap.put(oldFormId, formModel.getKey());
-        formKeyModelIdMap.put(formModel.getKey(), new ModelInfo(formModel.getId(), formModel.getName(), formModel.getKey()));
+        formKeyModelIdMap.put(formModel.getKey(), new ModelInfo(null,"dsda","sadas"));
       }
       
       Map<Long, String> oldDecisionTableIdDecisionTableKeyMap = new HashMap<Long, String>();
@@ -344,8 +344,7 @@ public class AppDefinitionImportService {
       for (Long oldDecisionTableId : decisionTableKeyAndModelMap.keySet()) {
         Model decisionTableModel = decisionTableKeyAndModelMap.get(oldDecisionTableId);
         oldDecisionTableIdDecisionTableKeyMap.put(oldDecisionTableId, decisionTableModel.getKey());
-        decisionTableKeyModelIdMap.put(decisionTableModel.getKey(), new ModelInfo(decisionTableModel.getId(), 
-            decisionTableModel.getName(), decisionTableModel.getKey()));
+        decisionTableKeyModelIdMap.put(decisionTableModel.getKey(), new ModelInfo(null,"dsda","sadas"));
       }
 
       BpmnModel bpmnModel = bpmnJsonConverter.convertToBpmnModel(bpmnModelNode, oldFormIdFormKeyMap, oldDecisionTableIdDecisionTableKeyMap);
